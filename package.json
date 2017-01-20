@@ -1,0 +1,13 @@
+{
+  "name": "parks-web-gps-scrape",
+  "version": "0.0.1",
+  "description": "Gets GPS coordinates for all Victorian national park points of interest.",
+  "main": "server.js",
+  "author": "codesidekick",
+  "dependencies": {
+    "cheerio": "latest",
+    "node-fetch": "^1.6.3",
+    "q": "^1.4.1",
+    "request": "latest"
+  }
+}
