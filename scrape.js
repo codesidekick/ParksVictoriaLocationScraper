@@ -6,25 +6,28 @@ var cheerio = require('cheerio');
 var q = require('q');
 var fetch = require('node-fetch');
 
-const PARKS_LIST_BASE_URL = 'http://webmap.hphp.geomatic.com.au/MarsHandler.veplus?directory=V_PARKS_SEARCH&cmd=parksearchadvanced&query=pr-keyword%3D%26pr-distance%3D%26pr-location%3D&ajaxDataType=jsonp&pageSize=50&pageNo={page}';
-const PARK_LANDMARKS_URL = 'http://webmap.hphp.geomatic.com.au/MarsHandler.veplus?directory=PV_MAP_SPATIAL_ENTITY&cmd=getitemsbyid&searchtype=ParkLanding&pageSize=10&query={guid}';
+var Park = require('./src/Park');
+var PlaceLandmark = require('./src/PlaceLandmark');
+var Coordinate = require('./src/Coordinate');
+
+const PARKS_LIST_BASE_URL = 'http://webmap.hphp.geomatic.com.au/MarsHandler.veplus?directory=V_PARKS_SEARCH&cmd=parksearchadvanced&searchOrder=Name&query=pr-keyword%3D%26pr-distance%3D%26pr-location%3D&ajaxDataType=jsonp&pageSize=50&pageNo={page}';
 
 var getParks = function(_parksPage, _currentParks) {
   let parksPage = _parksPage || 1;
   let currentParks = _currentParks || [];
 
   return fetchParksList(parksPage).then(parks => {
-    if (parks.length == 0 || _parksPage > 5) {
-      console.log(`Parks metadata download complete: ${currentParks.length + 1} downloaded`);
+    // Keep scraping until there are no more results.
+    if (parks.length == 0) {
+      console.log(`Parks metadata download complete: ${currentParks.length} downloaded`);
 
       return currentParks;
     }
-    else {
-      currentParks = currentParks.concat(parks);
-      console.log(`Downloading Parks metadata: ${currentParks.length + 1} downloaded`);
-      
-      return getParks(parksPage + 1, currentParks);
-    }
+
+    currentParks = currentParks.concat(parks);
+    console.log(`Downloading Parks metadata: ${currentParks.length} downloaded`);
+    
+    return getParks(parksPage + 1, currentParks);
   })
 };
 
@@ -51,64 +54,13 @@ var fetchParksList = function(pageNumber) {
   });
 }
 
-var scrapePark = function (parkUrl) {
-  return [
-    { title: 'test', url: parkUrl }
-  ]
-}
-
-class Park {
-  constructor(title, description, guid) {
-    this.title = title;
-    this.description = description;
-    this.guid = guid;
-    this.landmarks = [];
-  }
-  addLandmark(landmark) {
-    this.landmarks.push(landmark);
-  }
-  fetchLandmarks() {
-    let landmarksUrl = PARK_LANDMARKS_URL.replace('{guid}', this.guid);
-
-    return fetch(landmarksUrl).then(json => {
-      return json.text();
-    }).then(landmarkResponseText => {
-      var json = JSON.parse(landmarkResponseText.slice(1, -1));
-      var landmarkResults = json.response;
-
-      landmarkResults.forEach((landmarkResult) => {
-        // Deal with double encoded strings.
-        let landmarkJson = JSON.parse(landmarkResult);
-        var landmark = this.processLandmarkResult(landmarkJson);
-        
-        this.addLandmark(landmark);
-      });
-      
-    }).then(() => this.landmarks);
-  }
-  processLandmarkResult(landmarkResult) {
-    let {title, description, mapLatLng} = landmarkResult;
-    let coordinates = new Coordinate(mapLatLng.lat, mapLatLng.lng);
-
-    return new ParkLandmark(title, description, coordinates)
-  }
-}
-
-class ParkLandmark {
-  constructor(title, description, coordinates) {
-    this.title = title;
-    this.description = description;
-    this.coordinates = coordinates;
-  }
-};
-
-class Coordinate {
-  constructor(lat, long) {
-    this.lat = lat;
-    this.long = long;
-  }
-}
-
 getParks().then(parks => {
-  console.log(parks.length);
+  var parksPromises = parks.map((park) => park.fetchLandmarks());
+  
+  q.all(parksPromises).then(landmarks => {
+    console.log(parks[0].title);
+    fs.writeFile('output.json', JSON.stringify(parks, null, 4), function(err){
+      console.log('File successfully written! - Check your project directory for the output.json file');
+    });
+  });
 });
