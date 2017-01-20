@@ -36,7 +36,7 @@ class Park {
         }
       });
         
-      console.log(`Fetched ${this.landmarks.length} landmarks for ${this.title}`);
+      console.log(`Fetched ${this.landmarks.length} landmark(s) for ${this.title}`);
       
     }).then(() => this.landmarks);
   }
