@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="UTF-8">
+  <title>Parks Victoria GPS locations</title>
+  <script src="https://code.jquery.com/jquery-3.1.1.min.js" integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8="
+    crossorigin="anonymous"></script>
+  <link rel="stylesheet" href="https://unpkg.com/purecss@0.6.2/build/pure-min.css" integrity="sha384-UQiGfs9ICog+LwheBSRCt1o5cbyKIHbwjWscjemyBMT9YCUMZffs6UqUTd0hObXD" crossorigin="anonymous">
+</head>
+
+<body>
+  <div class="content" style="max-width: 1200px; margin: 0 auto; padding: 30px;">
+    <h1>Parks VIC GPS locations</h1>
+    <p>Contains Parks VIC GPS locations and Google Maps links for easy navigation.</p>
+    <p>See <a href="https://github.com/codesidekick/ParksVictoriaLocationScraper">https://github.com/codesidekick/ParksVictoriaLocationScraper</a> to see how the data was retrieved.</p>
+    <p>Original content from Parks Victoria. Scraper written by Marton Bodonyi.</p>
+    <div id="list"></div>
+  </div>
+
+  <script>
+    // Below code is extremely quick and dirty just to get a basic output for the Readme.
+        $.get('output.json').done(function (results) {
+          var listString = '<table class="pure-table pure-table-horizontal" width="100%">';
+          
+          for (var i = 0; i < results.length; i ++) {
+            var result = results[i];
+
+            var nationalParkHtml = '<thead>';
+            nationalParkHtml += '<tr><td colspan="3"><h2>' + result.title + '</h2></td></tr>';
+            nationalParkHtml += '</thead>';
+            nationalParkHtml += '<tbody>';
+            
+            for (var l = 0; l < result.landmarks.length; l++) {
+              var landmark = result.landmarks[l];
+              
+              nationalParkHtml += '<tr>\
+                <td>' + landmark.title + '</td>\
+                <td>' + landmark.coordinates.lat + ',' + landmark.coordinates.long + '</td>\
+                <td><a href="http://www.google.com/maps/place/' + landmark.coordinates.lat + ',' + landmark.coordinates.long + '/data=!3m1!1e3" target="_blank">Open in Google Maps</a>\
+              </tr>';
+            }
+            
+            nationalParkHtml += '</tr></td></tbody>';
+            
+            listString += nationalParkHtml;
+          }
+          
+          $('#list').html(listString);
+        });
+      </script>
+</body>
+
+</html>
