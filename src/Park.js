@@ -24,12 +24,19 @@ class Park {
       var landmarkResults = json.response;
 
       landmarkResults.forEach(landmarkResult => {
+        try {
         // Deal with double encoded strings.
         let landmarkJson = JSON.parse(landmarkResult);
         var landmark = this.processLandmarkResult(landmarkJson);
         
         this.addLandmark(landmark);
+        }
+        catch(e) {
+          console.log(`Landmark for ${this.title} failed to load`);
+        }
       });
+        
+      console.log(`Fetched ${this.landmarks.length} landmarks for ${this.title}`);
       
     }).then(() => this.landmarks);
   }

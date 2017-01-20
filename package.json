@@ -8,6 +8,7 @@
     "cheerio": "latest",
     "node-fetch": "^1.6.3",
     "q": "^1.4.1",
+    "qlimit": "^0.1.1",
     "request": "latest"
   }
 }
