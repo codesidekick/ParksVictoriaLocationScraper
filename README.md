@@ -4,11 +4,9 @@ This simple NodeJS scraper outputs a list of all Victorian national parks comple
 
 ## Installation
 
-1. Install using npm Install
-2. Run using node scrape.json
-3. Open the output.json to see the scraped data
-
-Show what the library does as concisely as possible, developers should be able to figure out **how** your project solves their problem by looking at the code example. Make sure the API you are showing off is obvious, and that your code is short and concise.
+1. Install using `npm install`
+2. Run using `node scrape.js`
+3. Open the `output.json` to see the scraped data
 
 ## Motivation
 

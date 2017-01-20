@@ -1,3 +1,7 @@
+var fetch = require('node-fetch');
+var PlaceLandmark = require('./PlaceLandmark');
+var Coordinate = require('./Coordinate');
+
 const PARK_LANDMARKS_URL = 'http://webmap.hphp.geomatic.com.au/MarsHandler.veplus?directory=PV_MAP_SPATIAL_ENTITY&cmd=getitemsbyid&searchOrder=Name&searchtype=ParkLanding&pageSize=10&query={guid}';
 
 class Park {
