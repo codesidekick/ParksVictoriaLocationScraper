@@ -1,8 +1,8 @@
 var fetch = require('node-fetch');
-var PlaceLandmark = require('./PlaceLandmark');
+var ParkLandmark = require('./ParkLandmark');
 var Coordinate = require('./Coordinate');
 
-const PARK_LANDMARKS_URL = 'http://webmap.hphp.geomatic.com.au/MarsHandler.veplus?directory=PV_MAP_SPATIAL_ENTITY&cmd=getitemsbyid&searchOrder=Name&searchtype=ParkLanding&pageSize=10&query={guid}';
+const PARK_LANDMARKS_URL = 'http://webmap.hphp.geomatic.com.au/MarsHandler.veplus?directory=PV_MAP_SPATIAL_ENTITY&cmd=getitemsbyid&searchtype=ParkLanding&pageSize=10&query={guid}';
 
 class Park {
   constructor(title, description, guid) {
@@ -16,14 +16,14 @@ class Park {
   }
   fetchLandmarks() {
     let landmarksUrl = PARK_LANDMARKS_URL.replace('{guid}', this.guid);
-
+    
     return fetch(landmarksUrl).then(json => {
       return json.text();
     }).then(landmarkResponseText => {
       var json = JSON.parse(landmarkResponseText.slice(1, -1));
       var landmarkResults = json.response;
 
-      landmarkResults.forEach((landmarkResult) => {
+      landmarkResults.forEach(landmarkResult => {
         // Deal with double encoded strings.
         let landmarkJson = JSON.parse(landmarkResult);
         var landmark = this.processLandmarkResult(landmarkJson);

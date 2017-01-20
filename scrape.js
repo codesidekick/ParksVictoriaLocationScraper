@@ -7,8 +7,6 @@ var q = require('q');
 var fetch = require('node-fetch');
 
 var Park = require('./src/Park');
-var PlaceLandmark = require('./src/PlaceLandmark');
-var Coordinate = require('./src/Coordinate');
 
 const PARKS_LIST_BASE_URL = 'http://webmap.hphp.geomatic.com.au/MarsHandler.veplus?directory=V_PARKS_SEARCH&cmd=parksearchadvanced&searchOrder=Name&query=pr-keyword%3D%26pr-distance%3D%26pr-location%3D&ajaxDataType=jsonp&pageSize=50&pageNo={page}';
 
@@ -58,9 +56,8 @@ getParks().then(parks => {
   var parksPromises = parks.map((park) => park.fetchLandmarks());
   
   q.all(parksPromises).then(landmarks => {
-    console.log(parks[0].title);
     fs.writeFile('output.json', JSON.stringify(parks, null, 4), function(err){
-      console.log('File successfully written! - Check your project directory for the output.json file');
+      console.log('Parks data successfully written to ./output.json');
     });
   });
 });
