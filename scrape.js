@@ -9,23 +9,6 @@ var fetch = require('node-fetch');
 const PARKS_LIST_BASE_URL = 'http://webmap.hphp.geomatic.com.au/MarsHandler.veplus?directory=V_PARKS_SEARCH&cmd=parksearchadvanced&query=pr-keyword%3D%26pr-distance%3D%26pr-location%3D&ajaxDataType=jsonp&pageSize=50&pageNo={page}';
 const PARK_LANDMARKS_URL = 'http://webmap.hphp.geomatic.com.au/MarsHandler.veplus?directory=PV_MAP_SPATIAL_ENTITY&cmd=getitemsbyid&searchtype=ParkLanding&pageSize=10&query={guid}';
 
-var getParkUrls = function () {
-  const parkUrls = [];
-
-  let startLetter = 'A'.charCodeAt(0);
-  let endLetter = 'Z'.charCodeAt(0);
-
-  for (let a = startLetter; a <= endLetter; a++) {
-    const letterUrl = PARKS_LIST_BASE_URL + String.fromCharCode(a);
-    parkUrls.push(letterUrl);
-  }
-
-  // For the 'other' category.
-  parkUrls.push(PARKS_LIST_BASE_URL + '@');
-
-  return parkUrls;
-}
-
 var getParks = function(_parksPage, _currentParks) {
   let parksPage = _parksPage || 1;
   let currentParks = _currentParks || [];
@@ -151,45 +134,7 @@ var scrapeParks = function (parkUrls) {
   
   return q.all(deffered.promise);
 }
-/*
-var parkUrls = getParkUrls();
-scrapeParks(parkUrls).then(parks => {
-  console.log(parks);
-});*/
 
 getParks().then(parks => {
   console.log(parks.length);
 });
-/*
-fetchPark('http://parkweb.vic.gov.au/explore/parks/yarra-ranges-national-park').then((park) => {
-  park.fetchLandmarks().then(() => {
-    console.log(park.landmarks[0].title);
-  });
-});
-*/
-
-//console.log(parkUrls);
-
-/*
-url = 'http://www.imdb.com/title/tt1229340/';
-
-// The structure of our request call
-// The first parameter is our URL
-// The callback function takes 3 parameters, an error, response status code and the html
-
-request(url, function(error, response, html){
-
-    // First we'll check to make sure no errors occurred when making the request
-
-    if(!error){
-        // Next, we'll utilize the cheerio libranry on the returned html which will essentially give us jQuery functionality
-
-        var $ = cheerio.load(html);
-
-        // Finally, we'll define the variables we're going to capture
-
-        var title, release, rating;
-        var json = { title : "", release : "", rating : ""};
-    }
-})
-*/
