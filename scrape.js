@@ -109,32 +109,6 @@ class Coordinate {
   }
 }
 
-var fetchPark = function(parkUrl) {
-  return fetch(parkUrl).then(function(res) {
-    return res.text();
-  }).then(function(html) {
-    let $ = cheerio.load(html);
-    
-    let title = $('meta[name="DC.Title"]').attr('content');
-    let guid = $('#guid').text();
-    
-    let landmarksUrl = PARK_LANDMARKS_URL.replace('{guid}', guid);
-    
-    return new Park(title, guid);
-  });
-}
-
-var scrapeParks = function (parkUrls) {
-  const parkPromises = [];
-  const deferred = q.defer();
-
-  parkUrls.forEach(parkUrl => {
-    parkPromises = fetchPark(parkUrl);
-  });
-  
-  return q.all(deffered.promise);
-}
-
 getParks().then(parks => {
   console.log(parks.length);
 });
